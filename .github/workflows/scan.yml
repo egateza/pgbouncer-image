@@ -10,6 +10,7 @@ on:
     # Scan ulang tiap Senin jam 03:00 UTC supaya CVE baru pada base image/paket
     # tetap ketahuan walau tidak ada perubahan kode.
     - cron: '0 3 * * 1'
+  workflow_dispatch: {}   # bisa trigger manual dari tab Actions
 
 permissions:
   contents: read
@@ -33,7 +34,7 @@ jobs:
           tags: pgbouncer:scan
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: pgbouncer:scan
           format: sarif
