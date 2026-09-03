@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # otomatis jadi <username-github>/<nama-repo>
+  IMAGE_NAME: ${{ github.repository_owner }}/pgbouncer   # nama image tetap "pgbouncer", terlepas dari nama repo
 
 jobs:
   build-and-push:
