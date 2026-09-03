@@ -2,6 +2,21 @@
 set -euo pipefail
 
 CONFIG_DIR="/etc/pgbouncer"
+PID_FILE="/var/run/pgbouncer/pgbouncer.pid"
+
+# --- Bersihkan pidfile basi peninggalan run sebelumnya ---
+# PgBouncer menolak start ("FATAL pidfile ... exists, another instance running?")
+# kalau pidfile-nya masih ada. Normalnya pidfile ini dihapus sendiri oleh PgBouncer
+# saat exit bersih (SIGTERM), TAPI `/var/run/pgbouncer` adalah folder biasa di
+# writable layer container (bukan tmpfs) — jadi kalau container sebelumnya mati
+# tidak bersih (mis. `docker stop` timeout karena masih ada koneksi/transaksi aktif
+# lalu berakhir SIGKILL, atau OOM), pidfile itu TERTINGGAL di sana. Lalu `docker
+# restart` memakai ulang writable layer yang sama (beda dengan `docker rm` + create
+# baru), sehingga PgBouncer yang start berikutnya nemu pidfile lama itu dan menolak
+# jalan — padahal proses lamanya sudah pasti mati, karena entrypoint ini exec
+# pgbouncer sekali per start container (tidak mungkin ada instance lain yang
+# benar-benar hidup di sini untuk ditabrak).
+rm -f "$PID_FILE"
 
 # --- Validasi environment variable WAJIB (tidak punya nilai default yang aman) ---
 required_vars=(DB_HOST DB_PORT DB_NAME AUTH_USER AUTH_PASSWORD)
