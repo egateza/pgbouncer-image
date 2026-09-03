@@ -2,10 +2,10 @@ name: Scan PgBouncer Image
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     tags: ['v*']
   pull_request:
-    branches: [main]
+    branches: [master]
   schedule:
     # Scan ulang tiap Senin jam 03:00 UTC supaya CVE baru pada base image/paket
     # tetap ketahuan walau tidak ada perubahan kode.
