@@ -1,0 +1,25 @@
+# Rahasia lokal — JANGAN commit, dipakai untuk testing lokal (lihat docker-compose.yml)
+.env
+.env.*
+!.env.template
+*.pem
+*.key
+
+# Override compose lokal (jangan ikut commit konfigurasi khusus mesin developer)
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Log & backup
+*.log
+*.bak

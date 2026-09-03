@@ -1,0 +1,5 @@
+# Paksa LF untuk file yang di-COPY ke image Linux / dieksekusi sebagai shell script —
+# mencegah core.autocrlf di mesin Windows mengubahnya jadi CRLF saat checkout, yang
+# akan merusak shebang & eksekusi di dalam container ("$'\r': command not found").
+* text=auto eol=lf
+*.sh text eol=lf

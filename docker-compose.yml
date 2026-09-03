@@ -1,0 +1,42 @@
+services:
+  pgbouncer:
+    build: .
+    image: pgbouncer:1.0.1
+    container_name: pgbouncer-test
+    ports:
+      - "6432:6432"
+    environment:
+      DB_HOST: ${DB_HOST:-localhost}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-testdb}
+      AUTH_TYPE: ${AUTH_TYPE:-md5}
+      AUTH_USER: ${AUTH_USER:-testuser}
+      AUTH_PASSWORD: ${AUTH_PASSWORD}
+      ADMIN_USER: ${ADMIN_USER:-pgbouncer_admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      STATS_USER: ${STATS_USER:-pgbouncer_stats}
+      STATS_PASSWORD: ${STATS_PASSWORD}
+      POOL_MODE: ${POOL_MODE:-transaction}
+      MAX_CLIENT_CONN: ${MAX_CLIENT_CONN:-500}
+      DEFAULT_POOL_SIZE: ${DEFAULT_POOL_SIZE:-25}
+      SERVER_TLS_SSLMODE: disable
+    restart: unless-stopped
+    healthcheck:
+      # CMD-SHELL supaya $ADMIN_USER di-expand oleh shell DI DALAM container (baca
+      # environment: container di atas) saat healthcheck jalan — bukan oleh Docker
+      # Compose sendiri (bentuk array ["CMD", ...] di-interpolate Compose dari
+      # environment shell HOST saat parsing file, hasilnya selalu fallback ke
+      # "testuser" yang tidak ada di userlist.txt, sehingga healthcheck selalu gagal).
+      # PENTING: "$$ADMIN_USER" (bukan "$ADMIN_USER") — Compose meng-interpolate
+      # SEMUA "$VAR" yang ada literal di teks file ini saat parsing, termasuk yang
+      # dimaksud untuk shell container. "$$" adalah escape Compose supaya lolos
+      # jadi literal "$ADMIN_USER" ke container, baru di-expand oleh shell di sana.
+      # pg_isready cukup untuk cek server hidup, tidak perlu password/login sukses.
+      # Pakai ADMIN_USER (bukan AUTH_USER) supaya lolos ACL admin_users di db
+      # "pgbouncer" — kalau pakai user biasa, PgBouncer menolak dengan WARNING
+      # "not allowed" tiap interval (log jadi berisik meski secara fungsi tetap sehat).
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 6432 -U \"$$ADMIN_USER\" -d pgbouncer"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3

@@ -1,0 +1,50 @@
+name: Scan PgBouncer Image
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  schedule:
+    # Scan ulang tiap Senin jam 03:00 UTC supaya CVE baru pada base image/paket
+    # tetap ketahuan walau tidak ada perubahan kode.
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write   # perlu untuk upload hasil ke tab "Security" > Code scanning
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image (local, tidak di-push)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: pgbouncer:scan
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: pgbouncer:scan
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          # Jangan gagalkan job hanya karena ada temuan — biar tetap ke-upload ke
+          # Security tab dulu. Ganti exit-code jadi '1' kalau mau job gagal saat
+          # ada CRITICAL/HIGH.
+          exit-code: '0'
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
