@@ -73,6 +73,7 @@ Tidak punya default yang aman — container akan langsung berhenti dengan error 
 | `DEFAULT_POOL_SIZE` | `25` | Koneksi aktual ke PostgreSQL per pasangan database/user. |
 | `MIN_POOL_SIZE` | `5` | Jumlah koneksi minimum yang dijaga tetap terbuka. |
 | `RESERVE_POOL_SIZE` | `5` | Koneksi cadangan saat pool utama penuh. |
+| `APPLICATION_NAME` | `pgbouncer` | Dikirim sebagai `application_name` ke PostgreSQL backend, muncul di `pg_stat_activity` (digabung otomatis dengan host:port client karena `application_name_add_host` aktif di `pgbouncer.ini`). |
 | `CLIENT_TLS_SSLMODE` | `disable` | TLS untuk koneksi aplikasi → PgBouncer. Kalau diisi selain `disable`, `CLIENT_TLS_CERT` dan `CLIENT_TLS_KEY` wajib diisi juga. |
 | `CLIENT_TLS_CERT` / `CLIENT_TLS_KEY` | *(kosong)* | Path sertifikat/key TLS sisi client (di dalam container). |
 | `SERVER_TLS_SSLMODE` | `require` | TLS untuk koneksi PgBouncer → PostgreSQL. |

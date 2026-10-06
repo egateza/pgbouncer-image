@@ -4,7 +4,7 @@
 ;; ==========================================================
 
 [databases]
-${DB_NAME} = host=${DB_HOST} port=${DB_PORT} dbname=${DB_NAME} pool_size=${DEFAULT_POOL_SIZE}
+${DB_NAME} = host=${DB_HOST} port=${DB_PORT} dbname=${DB_NAME} pool_size=${DEFAULT_POOL_SIZE} application_name=${APPLICATION_NAME}
 
 [pgbouncer]
 ;; --- Listener ---

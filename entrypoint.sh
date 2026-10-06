@@ -45,6 +45,7 @@ export MAX_CLIENT_CONN="${MAX_CLIENT_CONN:-500}"
 export DEFAULT_POOL_SIZE="${DEFAULT_POOL_SIZE:-25}"
 export MIN_POOL_SIZE="${MIN_POOL_SIZE:-5}"
 export RESERVE_POOL_SIZE="${RESERVE_POOL_SIZE:-5}"
+export APPLICATION_NAME="${APPLICATION_NAME:-pgbouncer}"
 # client_tls_sslmode selain "disable" WAJIB punya client_tls_cert_file dan
 # client_tls_key_file terisi (PgBouncer bertindak sebagai TLS server ke client).
 # Default "disable" karena koneksi client -> pgbouncer biasanya lewat jaringan
